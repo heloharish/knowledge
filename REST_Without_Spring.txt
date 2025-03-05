@@ -1,0 +1,155 @@
+Let's create a simple RESTful API using Java without using Spring Boot, instead leveraging Java's standard HTTP server capabilities available since JDK 1.6, specifically using the `com.sun.net.httpserver` package. This approach can be useful for lightweight or educational purposes but lacks the extensive features and support of frameworks like Spring.
+
+### Simple REST API Using Java's `HttpServer`
+
+#### Step 1: Set Up Your Project
+
+- Ensure you have JDK 1.6 or later installed.
+- Set up a basic Java project structure.
+
+#### Step 2: Create the Data Model
+
+A simple `User` class with basic attributes:
+
+```java
+public class User {
+    private Long id;
+    private String name;
+    private String email;
+
+    public User(Long id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
+
+    // Getters and Setters
+    // Override toString() if needed
+}
+```
+
+#### Step 3: Create an HTTP Server
+
+Here's a basic example to create a server and handle HTTP requests:
+
+```java
+import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpExchange;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Map;
+
+public class SimpleHttpServer {
+
+    private static Map<Long, User> users = new HashMap<>();
+
+    public static void main(String[] args) throws IOException {
+        HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
+        server.createContext("/api/users", new UserHandler());
+        server.setExecutor(null); // creates a default executor
+        server.start();
+        System.out.println("Server started on port 8000");
+    }
+
+    static class UserHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            String response = "";
+            String method = exchange.getRequestMethod();
+
+            switch (method) {
+                case "GET":
+                    response = handleGet(exchange);
+                    break;
+                case "POST":
+                    response = handlePost(exchange);
+                    break;
+                case "PUT":
+                    response = handlePut(exchange);
+                    break;
+                case "DELETE":
+                    response = handleDelete(exchange);
+                    break;
+                default:
+                    exchange.sendResponseHeaders(405, -1); // Method Not Allowed
+                    return;
+            }
+
+            exchange.sendResponseHeaders(200, response.getBytes().length);
+            OutputStream os = exchange.getResponseBody();
+            os.write(response.getBytes());
+            os.close();
+        }
+
+        private String handleGet(HttpExchange exchange) {
+            String[] path = exchange.getRequestURI().toString().split("/");
+            if (path.length == 4) { 
+                Long userId = Long.parseLong(path[3]);  // Example: /api/users/1
+                User user = users.get(userId);
+                if (user != null) {
+                    return user.toString();
+                } else {
+                    return "User not found";
+                }
+            }
+            return users.values().toString();
+        }
+
+        private String handlePost(HttpExchange exchange) throws IOException {
+            // Example assumes input like `{"id": 1, "name": "John", "email": "john@example.com"}`
+            String body = new String(exchange.getRequestBody().readAllBytes());
+            // Ideally, parse JSON to get user data; simplified here
+            Long userId = Long.valueOf(users.size()) + 1;
+            User user = new User(userId, "newName", "newEmail");
+            users.put(userId, user);
+            return "User created: " + user;
+        }
+
+        private String handlePut(HttpExchange exchange) throws IOException {
+            // Minimal handling; proper parsing should be added
+            String[] path = exchange.getRequestURI().toString().split("/");
+            if (path.length == 4) {
+                Long userId = Long.parseLong(path[3]);
+                User user = users.get(userId);
+                if (user != null) {
+                    // Update user information from request body
+                    user.setName("updatedName");
+                    user.setEmail("updatedEmail");
+                    return "User updated: " + user;
+                }
+            }
+            return "User not found";
+        }
+
+        private String handleDelete(HttpExchange exchange) {
+            String[] path = exchange.getRequestURI().toString().split("/");
+            if (path.length == 4) {
+                Long userId = Long.parseLong(path[3]);
+                User deletedUser = users.remove(userId);
+                if (deletedUser != null) {
+                    return "User deleted: " + deletedUser;
+                }
+            }
+            return "User not found";
+        }
+    }
+}
+```
+
+### Code Explanation
+
+- **Server Setup:**
+  - An `HttpServer` instance listens on port `8000`.
+  - `UserHandler` handles HTTP requests at the `/api/users` endpoint.
+  
+- **Handler Logic:**
+  - `GET`: Retrieves user list or individual user based on URL.
+  - `POST`: Creates a new user (simple add without JSON parsing).
+  - `PUT`: Updates a user (example simplified; extend by parsing request body).
+  - `DELETE`: Deletes a specified user by ID.
+
+This example demonstrates building a basic RESTful API using Java's built-in HTTP server functionalities with minimal dependencies. For production-ready applications, frameworks like Spring or JAX-RS (Jersey) are recommended, as they provide more robust features, better error handling, and easier integration with other services.
