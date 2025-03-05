@@ -1,0 +1,184 @@
+The SOLID principles are a set of five design principles intended to make software designs more understandable, flexible, and maintainable. They are a part of object-oriented programming and can be applied to improve code quality in Java, among other languages. Here's a brief explanation of each principle along with a simple Java code example to illustrate each:
+
+### 1. Single Responsibility Principle (SRP)
+
+**Principle**: A class should have only one reason to change, meaning it should only have one job or responsibility.
+
+**Java Example**:
+```java
+class InvoicePrinter {
+    public void print(Invoice invoice) {
+        // logic to print the invoice
+        System.out.println("Printing the invoice...");
+    }
+}
+
+class Invoice {
+    private double amount;
+    private String customer;
+
+    public Invoice(double amount, String customer) {
+        this.amount = amount;
+        this.customer = customer;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public String getCustomer() {
+        return customer;
+    }
+
+    // Additional methods for handling the invoice logic
+}
+```
+
+### 2. Open/Closed Principle (OCP)
+
+**Principle**: Software entities should be open for extension but closed for modification.
+
+**Java Example**:
+```java
+abstract class Shape {
+    abstract double area();
+}
+
+class Circle extends Shape {
+    private double radius;
+
+    public Circle(double radius) {
+        this.radius = radius;
+    }
+
+    @Override
+    double area() {
+        return Math.PI * radius * radius;
+    }
+}
+
+class Square extends Shape {
+    private double side;
+
+    public Square(double side) {
+        this.side = side;
+    }
+
+    @Override
+    double area() {
+        return side * side;
+    }
+}
+
+class AreaCalculator {
+    public double calculateTotalArea(Shape[] shapes) {
+        double totalArea = 0;
+        for (Shape shape : shapes) {
+            totalArea += shape.area();
+        }
+        return totalArea;
+    }
+}
+```
+
+### 3. Liskov Substitution Principle (LSP)
+
+**Principle**: Objects of a superclass should be replaceable with objects of a subclass without affecting the correctness of the program.
+
+**Java Example**:
+```java
+class Bird {
+    public void fly() {
+        System.out.println("Flying");
+    }
+}
+
+class Sparrow extends Bird {
+}
+
+class Ostrich extends Bird {
+    // Ostrich does not fly
+    @Override
+    public void fly() {
+        throw new UnsupportedOperationException("Ostriches can't fly");
+    }
+}
+
+class BirdWatcher {
+    public void watchBirdsFly(Bird bird) {
+        // Ideally, we should be able to invoke fly without causing an exception
+        bird.fly();
+    }
+}
+```
+To follow LSP, `Ostrich` should not override the `fly` method if it can't support flying without throwing an exception. A better approach would be to have a different hierarchy or methods signaling the ability to fly.
+
+### 4. Interface Segregation Principle (ISP)
+
+**Principle**: Clients should not be forced to depend upon interfaces that they do not use.
+
+**Java Example**:
+```java
+interface IPrinter {
+    void print();
+}
+
+interface IScanner {
+    void scan();
+}
+
+class MultiFunctionPrinter implements IPrinter, IScanner {
+    public void print() {
+        System.out.println("Printing...");
+    }
+    public void scan() {
+        System.out.println("Scanning...");
+    }
+}
+
+class Printer implements IPrinter {
+    public void print() {
+        System.out.println("Printing...");
+    }
+}
+```
+
+### 5. Dependency Inversion Principle (DIP)
+
+**Principle**: High-level modules should not depend on low-level modules. Both should depend on abstractions. Abstractions should not depend on details; details should depend on abstractions.
+
+**Java Example**:
+```java
+interface Keyboard {
+    void type();
+}
+
+class MechanicalKeyboard implements Keyboard {
+    public void type() {
+        System.out.println("Typing on Mechanical Keyboard");
+    }
+}
+
+class Computer {
+    private final Keyboard keyboard;
+
+    public Computer(Keyboard keyboard) {
+        this.keyboard = keyboard;
+    }
+
+    public void type() {
+        keyboard.type();
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        Keyboard keyboard = new MechanicalKeyboard();
+        Computer computer = new Computer(keyboard);
+        computer.type();
+    }
+}
+```
+
+### Summary
+The SOLID principles provide a framework for writing cleaner, more maintainable, and scalable code by focusing on the design and architecture of software. By following these principles, developers can ensure that their codebase remains flexible and easy to modify or extend over time.
