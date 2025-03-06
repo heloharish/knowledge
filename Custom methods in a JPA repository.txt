@@ -1,0 +1,107 @@
+Custom methods in a JPA repository and managing transactions effectively are key aspects of working with databases in Spring Boot applications. Here’s how you can implement custom repository methods and manage transactions using Spring's tools.
+
+### Custom Repository Methods
+
+JPA provides a flexible way to define custom query methods. You can write custom queries using:
+
+1. **Method Name Convention**: Create methods in your repository interface that follow Spring Data JPA’s naming convention.
+2. **JPQL Queries**: Use the `@Query` annotation to write custom JPQL queries.
+3. **Native Queries**: Use native SQL queries for complex operations that JPQL cannot handle.
+
+**Example**:
+
+Assuming we have a `User` entity as previously described, let's add some custom methods to the `UserRepository`.
+
+#### Repository with Custom Methods
+
+```java
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+
+public interface UserRepository extends JpaRepository<User, Long> {
+
+    // Method Name Convention
+    List<User> findByLastName(String lastName);
+
+    // JPQL Custom Query
+    @Query("SELECT u FROM User u WHERE u.email LIKE %:emailDomain%")
+    List<User> findUsersByEmailDomain(@Param("emailDomain") String emailDomain);
+
+    // Native Query
+    @Query(value = "SELECT * FROM users u WHERE u.name = ?1", nativeQuery = true)
+    List<User> findUsersByNameNative(String name);
+}
+```
+
+**Explanation**:
+- `findByLastName`: Uses Spring Data JPA’s method naming convention.
+- `findUsersByEmailDomain`: Uses a JPQL custom query.
+- `findUsersByNameNative`: Uses a native SQL query.
+
+### Managing Transactions
+
+Transactions ensure that a series of operations are executed in a reliable and consistent way. Spring provides the `@Transactional` annotation to manage transactions declaratively.
+
+#### Transactional Service Example
+
+Create a service class using transaction management.
+
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Transactional
+    public User createUser(User user) {
+        // Logic that should run in a transaction
+        return userRepository.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public List<User> findAll() {
+        // Read-only transaction for fetching data
+        return userRepository.findAll();
+    }
+
+    @Transactional
+    public User updateUserEmail(Long userId, String newEmail) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setEmail(newEmail);
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public void deleteUser(Long userId) {
+        userRepository.deleteById(userId);
+    }
+}
+```
+
+**Explanation**:
+- **`@Transactional`**: Manages transactions declaratively. It ensures that either all operations within the annotated method are executed successfully or none at all.
+- **Transaction Propagation**: Default behavior assumes transactions are mandatory and non-nested.
+- **Read-Only Transactions**: The `readOnly = true` attribute optimizes fetch operations.
+
+### Key Considerations for Transactions
+
+1. **Propagation**: Determine transaction behavior relative to another transaction. Common options include REQUIRED, REQUIRES_NEW, and NESTED.
+   
+2. **Isolation Levels**: Handle concurrent transactions. Levels include READ_UNCOMMITTED, READ_COMMITTED, REPEATABLE_READ, and SERIALIZABLE.
+
+3. **Exception Handling**: By default, transactions are rolled back only for unchecked exceptions (runtime exceptions). Customize rollback behavior using `@Transactional(rollbackFor = Exception.class)`.
+
+4. **Read-only Optimization**: Set `@Transactional(readOnly = true)` for methods that only perform read operations to improve performance.
+
+Adding custom methods to a repository and managing transactions effectively are crucial in building robust and scalable applications. These techniques ensure flexibility and consistency in database operations, providing a solid foundation for any Spring Boot application with JPA.
