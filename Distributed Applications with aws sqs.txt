@@ -1,0 +1,112 @@
+Create a REST API endpoint that will handle sending, receiving, and deleting messages in Amazon SQS using Java and Spring Boot. This involves setting up a Spring Boot application and creating the necessary endpoints to interact with the SQS service.
+
+### Step 1: Set Up Spring Boot Project
+Create a new Spring Boot project and add the necessary dependencies. In your `pom.xml`, include the following dependencies:
+```xml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+<dependency>
+  <groupId>software.amazon.awssdk</groupId>
+  <artifactId>sqs</artifactId>
+  <version>2.17.0</version>
+</dependency>
+```
+
+### Step 2: Create SQS Configuration Class
+Create a configuration class to initialize the SQS client:
+```java
+import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.regions.Region;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class SQSConfig {
+    @Bean
+    public SqsClient sqsClient() {
+        return SqsClient.builder()
+                .region(Region.US_EAST_1)
+                .build();
+    }
+}
+```
+
+### Step 3: Create REST Controller
+Create a REST controller to handle the SQS operations:
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.model.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/sqs")
+public class SQSController {
+
+    @Autowired
+    private SqsClient sqsClient;
+
+    private final String queueUrl = "https://sqs.us-east-1.amazonaws.com/123456789012/MyQueue";
+
+    @PostMapping("/send")
+    public String sendMessage(@RequestParam String message) {
+        SendMessageRequest sendMsgRequest = SendMessageRequest.builder()
+                .queueUrl(queueUrl)
+                .messageBody(message)
+                .delaySeconds(10)
+                .build();
+
+        sqsClient.sendMessage(sendMsgRequest);
+        return "Message sent successfully!";
+    }
+
+    @GetMapping("/receive")
+    public List<Message> receiveMessages() {
+        ReceiveMessageRequest receiveRequest = ReceiveMessageRequest.builder()
+                .queueUrl(queueUrl)
+                .maxNumberOfMessages(5)
+                .build();
+
+        return sqsClient.receiveMessage(receiveRequest).messages();
+    }
+
+    @DeleteMapping("/delete")
+    public String deleteMessage(@RequestParam String receiptHandle) {
+        DeleteMessageRequest deleteRequest = DeleteMessageRequest.builder()
+                .queueUrl(queueUrl)
+                .receiptHandle(receiptHandle)
+                .build();
+
+        sqsClient.deleteMessage(deleteRequest);
+        return "Message deleted successfully!";
+    }
+}
+```
+
+### Step 4: Run Your Application
+Run your Spring Boot application, and you'll have the following API endpoints:
+- **Send Message**: POST `/sqs/send` with a `message` parameter
+- **Receive Messages**: GET `/sqs/receive`
+- **Delete Message**: DELETE `/sqs/delete` with a `receiptHandle` parameter
+
+### Step 5: Test Your API
+You can use tools like Postman or cURL to test your API endpoints. For example, to send a message:
+```sh
+curl -X POST "http://localhost:8080/sqs/send?message=Hello%20World"
+```
+
+To receive messages:
+```sh
+curl -X GET "http://localhost:8080/sqs/receive"
+```
+
+To delete a message:
+```sh
+curl -X DELETE "http://localhost:8080/sqs/delete?receiptHandle=your-receipt-handle"
+```
+
+This setup provides a basic REST API to interact with Amazon SQS. You can enhance it further based on your requirements. If you have any specific questions or need further assistance, feel free to ask!

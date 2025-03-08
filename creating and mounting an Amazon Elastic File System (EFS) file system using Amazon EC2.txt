@@ -1,0 +1,166 @@
+Below are the high-level steps for creating and mounting an Amazon Elastic File System (EFS) file system using Amazon EC2, and exposing this functionality via a Java-based REST API using Spring Boot.
+
+### Step 1: Set Up Your AWS Environment
+1. **Create an AWS Account**: If you don't have one, sign up at the AWS Management Console.
+2. **Install AWS CLI**: Install and configure the AWS Command Line Interface (CLI) to interact with your AWS resources.
+3. **Set Up AWS SDK for Java**: Add the AWS SDK for Java to your project dependencies. If you're using Maven, include the following dependency in your `pom.xml` file:
+   ```xml
+   <dependency>
+     <groupId>com.amazonaws</groupId>
+     <artifactId>aws-java-sdk-efs</artifactId>
+     <version>1.12.0</version>
+   </dependency>
+   ```
+
+### Step 2: Create an Amazon EFS File System
+1. **Create an EFS File System**: Use the AWS Management Console or AWS CLI to create an EFS file system.
+   ```sh
+   aws efs create-file-system --creation-token my-efs-token
+   ```
+
+2. **Create Mount Targets**: Create mount targets in your VPC to allow EC2 instances to access the file system.
+   ```sh
+   aws efs create-mount-target --file-system-id fs-12345678 --subnet-id subnet-12345678
+   ```
+
+### Step 3: Configure Security Group
+1. **Set Up Security Group**: Configure a security group to allow NFS traffic from your EC2 instances to the EFS mount targets.
+   ```sh
+   aws ec2 authorize-security-group-ingress --group-id sg-12345678 --protocol tcp --port 2049 --cidr 0.0.0.0/0
+   ```
+
+### Step 4: Mount EFS on EC2 Instances
+1. **Install NFS Utilities**: Install NFS utilities on your EC2 instances.
+   ```sh
+   sudo yum install -y amazon-efs-utils
+   ```
+
+2. **Mount the EFS File System**: Mount the EFS file system on your EC2 instances.
+   ```sh
+   sudo mount -t efs fs-12345678:/ /mnt/efs
+   ```
+
+### Step 5: Create REST API Using Spring Boot
+1. **Set Up Spring Boot Project**: Create a new Spring Boot project and add the necessary dependencies. In your `pom.xml`, include the following dependencies:
+   ```xml
+   <dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+<dependency>
+  <groupId>com.amazonaws</groupId>
+  <artifactId>aws-java-sdk-efs</artifactId>
+  <version>1.12.0</version>
+</dependency>
+<dependency>
+  <groupId>com.amazonaws</groupId>
+  <artifactId>aws-java-sdk-ec2</artifactId>
+  <version>1.12.0</version>
+</dependency>
+
+   ```
+
+2. **Create EFS Configuration Class**: Create a configuration class to initialize the EFS client.
+   ```java
+  import com.amazonaws.services.efs.AmazonElasticFileSystem;
+import com.amazonaws.services.efs.AmazonElasticFileSystemClientBuilder;
+import com.amazonaws.services.ec2.AmazonEC2;
+import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class AWSConfig {
+    @Bean
+    public AmazonElasticFileSystem efsClient() {
+        return AmazonElasticFileSystemClientBuilder.defaultClient();
+    }
+
+    @Bean
+    public AmazonEC2 ec2Client() {
+        return AmazonEC2ClientBuilder.defaultClient();
+    }
+}
+
+   ```
+
+3. **Create REST Controller**: Create a REST controller to handle EFS operations.
+   ```java
+   import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import com.amazonaws.services.efs.AmazonElasticFileSystem;
+import com.amazonaws.services.efs.model.*;
+import com.amazonaws.services.ec2.AmazonEC2;
+import com.amazonaws.services.ec2.model.*;
+
+@RestController
+@RequestMapping("/efs")
+public class EFSController {
+
+    @Autowired
+    private AmazonElasticFileSystem efsClient;
+
+    @Autowired
+    private AmazonEC2 ec2Client;
+
+    @PostMapping("/create")
+    public CreateFileSystemResult createFileSystem(@RequestParam String creationToken) {
+        CreateFileSystemRequest request = new CreateFileSystemRequest()
+                .withCreationToken(creationToken);
+        return efsClient.createFileSystem(request);
+    }
+
+    @PostMapping("/create-mount-target")
+    public CreateMountTargetResult createMountTarget(@RequestParam String fileSystemId, @RequestParam String subnetId) {
+        CreateMountTargetRequest request = new CreateMountTargetRequest()
+                .withFileSystemId(fileSystemId)
+                .withSubnetId(subnetId);
+        return efsClient.createMountTarget(request);
+    }
+
+    @PostMapping("/mount")
+    public String mountEFS(@RequestParam String instanceId, @RequestParam String fileSystemId) {
+        String script = "#!/bin/bash\n" +
+                        "yum install -y amazon-efs-utils\n" +
+                        "mount -t efs " + fileSystemId + " /mnt/efs\n";
+        RunInstancesRequest runRequest = new RunInstancesRequest()
+                .withInstanceIds(instanceId)
+                .withUserData(new String(Base64.getEncoder().encode(script.getBytes())));
+        ec2Client.runInstances(runRequest);
+        return "EFS mounted successfully!";
+    }
+
+    @GetMapping("/describe")
+    public DescribeFileSystemsResult describeFileSystems() {
+        DescribeFileSystemsRequest request = new DescribeFileSystemsRequest();
+        return efsClient.describeFileSystems(request);
+    }
+
+    @DeleteMapping("/delete")
+    public DeleteFileSystemResult deleteFileSystem(@RequestParam String fileSystemId) {
+        DeleteFileSystemRequest request = new DeleteFileSystemRequest()
+                .withFileSystemId(fileSystemId);
+        return efsClient.deleteFileSystem(request);
+    }
+}
+
+   ```
+
+### Step 6: Run and Test Your Application
+Run your Spring Boot application, and you'll have the following API endpoints:
+
+Create EFS File System: POST /efs/create with a creationToken parameter.
+
+Create Mount Target: POST /efs/create-mount-target with fileSystemId and subnetId parameters.
+
+Mount EFS on EC2: POST /efs/mount with instanceId and fileSystemId parameters.
+
+Describe EFS File Systems: GET /efs/describe
+
+Delete EFS File System: DELETE /efs/delete with a fileSystemId parameter.
+
+### Step 7: Mount EFS Automatically (Optional)
+You can create a script or use AWS Systems Manager to automate the mounting of the EFS file system on your EC2 instances during boot.
+
+This is a basic guide to creating and mounting an Amazon EFS file system using Amazon EC2 with Java as a REST API endpoint. You can enhance it further based on your requirements.
+
