@@ -1,0 +1,53 @@
+**Longest Substring Without Repeating Characters**
+
+   **Problem Statement**: 
+   Given a string `s`, find the length of the longest substring without repeating characters.
+   
+   **Code Solution**:
+   ```java
+   public int lengthOfLongestSubstring(String s) {
+       Set<Character> set = new HashSet<>();
+       int i = 0, j = 0, max = 0;
+
+       while (j < s.length()) {
+           if (!set.contains(s.charAt(j))) {
+               set.add(s.charAt(j++));
+               max = Math.max(max, j - i);
+           } else {
+               set.remove(s.charAt(i++));
+           }
+       }
+       return max;
+   }
+   ```
+
+   **Example Input**: `s = "abcabcbb"`
+   **Example Output**: `3`
+   
+   **Execution Explanation**:
+   - **Step 1**: Initialize set for tracking characters, and indices `i` and `j`.
+     - **set**: `{}`, **i**: `0`, **j**: `0`, **max**: `0`
+
+   - **Step 2**: Start sliding window traversal.
+     - For `j = 0`: `s[j] = 'a'`
+       - `'a'` not in set, add to set, expand window: `set = {'a'}`
+       - Increment `j`: `j = 1`
+       - Update max length: `max = max(0, 1 - 0) = 1`
+
+     - For `j = 1`: `s[j] = 'b'`
+       - Add `'b'` to set: `set = {'a', 'b'}`
+       - Increment `j`: `j = 2`
+       - Update max length: `max = max(1, 2 - 0) = 2`
+
+     - For `j = 2`: `s[j] = 'c'`
+       - Add `'c'` to set: `set = {'a', 'b', 'c'}`
+       - Increment `j`: `j = 3`
+       - Update max length: `max = max(2, 3 - 0) = 3`
+
+     - For `j = 3`: `s[j] = 'a'`
+       - Set contains `'a'`, remove `'a'` from starting index `i`: `set.remove('a')`
+       - Increment `i`: `i = 1`
+       - Repeat checking, continue similar logic for next characters.
+
+   - **Step 3**: Continue until `j` reaches the end.
+   - **Output**: `3`

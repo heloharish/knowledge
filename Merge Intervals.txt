@@ -1,0 +1,34 @@
+**Merge Intervals**
+
+    **Problem Statement**: Merge all overlapping intervals and return an array of the non-overlapping intervals that cover all intervals.
+
+    **Code Solution**:
+    ```java
+    public int[][] merge(int[][] intervals) {
+        Arrays.sort(intervals, (a, b) -> a[0] - b[0]);
+        List<int[]> mergedIntervals = new ArrayList<>();
+
+        int[] currentInterval = intervals[0];
+
+        for (int[] interval : intervals) {
+            if (interval[0] <= currentInterval[1]) {
+                currentInterval[1] = Math.max(currentInterval[1], interval[1]);
+            } else {
+                mergedIntervals.add(currentInterval);
+                currentInterval = interval;
+            }
+        }
+        mergedIntervals.add(currentInterval);
+        return mergedIntervals.toArray(new int[mergedIntervals.size()][]);
+    }
+    ```
+
+    **Example Input**: `intervals = [[1,3],[2,6],[8,10],[15,18]]`
+    **Example Output**: `[[1,6],[8,10],[15,18]]`
+
+    **Execution Explanation**:
+    - **Step 1**: Sort intervals.
+      - Merge overlapping based on condition, updating end of current.
+      - Add non-overlapping as separate interval.
+
+    - **Output**: [[1,6],[8,10],[15,18]]

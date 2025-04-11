@@ -1,0 +1,25 @@
+**Maximum Depth of Binary Tree**
+
+    **Problem Statement**: Given the root of a binary tree, return its maximum depth.
+
+    **Code Solution**:
+    ```java
+    public int maxDepth(TreeNode root) {
+        if (root == null) return 0;
+
+        int leftDepth = maxDepth(root.left);
+        int rightDepth = maxDepth(root.right);
+
+        return Math.max(leftDepth, rightDepth) + 1;
+    }
+    ```
+
+    **Example Input**: Similar to previous tree example
+    **Example Output**: `3`
+
+    **Execution Explanation**:
+    - **Step 1**: Recursively measure depth about each node.
+      - Recursive call to evaluate tree height.
+
+    - **Step 2**: Sum up path explorations.
+    - **Output**: Depth indicated by full calculation.

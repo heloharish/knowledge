@@ -1,0 +1,37 @@
+**Container With Most Water**
+
+   **Problem Statement**: Given `n` non-negative integers where each represents a point at coordinate `(i, ai)`, find two lines which form a container containing the most water.
+
+   **Code Solution**:
+   ```java
+   public int maxArea(int[] height) {
+       int left = 0, right = height.length - 1; 
+       int maxArea = 0;
+
+       while (left < right) {
+           int minHeight = Math.min(height[left], height[right]);
+           int area = minHeight * (right - left);
+           maxArea = Math.max(maxArea, area);
+           if (height[left] < height[right]) {
+               left++;
+           } else {
+               right--;
+           }
+       }
+       return maxArea;
+   }
+   ```
+
+   **Example Input**: `height = [1,8,6,2,5,4,8,3,7]`
+   **Example Output**: `49`
+
+   **Execution Explanation**:
+   - **Step 1**: Initialize pointers `left`, `right`, and track max area.
+     - Calculate initial area between `left` and `right`.
+     - Compare heights to determine movement (move shorter line inwards).
+
+   - **Step 2**: Move pointers to potentially find bigger area.
+     - Update max area.
+     - Continue until `left` and `right` meet.
+
+   - **Output**: `49`

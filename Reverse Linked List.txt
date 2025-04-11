@@ -1,0 +1,29 @@
+**Reverse Linked List**
+
+    **Problem Statement**: Reverse a singly linked list.
+
+    **Code Solution**:
+    ```java
+    public ListNode reverseList(ListNode head) {
+        ListNode prev = null;
+
+        while (head != null) {
+            ListNode nextNode = head.next;
+            head.next = prev;
+            prev = head;
+            head = nextNode;
+        }
+
+        return prev;
+    }
+    ```
+
+    **Example Input**: `head = [1, 2, 3, 4, 5]`
+    **Example Output**: `[5, 4, 3, 2, 1]`
+
+    **Execution Explanation**:
+    - **Step 1**: Flip `next` pointers.
+      - Utilize simple operations to swap pointer directions.
+      - Progress `prev`/`head` in list under new structure.
+
+    - **Output**: Reverse achieved

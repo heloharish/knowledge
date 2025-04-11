@@ -1,0 +1,31 @@
+**Linked List Cycle**
+
+    **Problem Statement**: Given `head`, the head of a linked list, determine if the linked list has a cycle.
+
+    **Code Solution**:
+    ```java
+    public boolean hasCycle(ListNode head) {
+        if (head == null || head.next == null) return false;
+
+        ListNode slow = head;
+        ListNode fast = head.next;
+
+        while (slow != fast) {
+            if (fast == null || fast.next == null) return false;
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        return true;
+    }
+    ```
+
+    **Example Input**: A linked list with nodes forming a cycle
+    **Example Output**: `true`
+
+    **Execution Explanation**:
+    - **Step 1**: Use two pointers.
+      - Fast checks cycle potential by 2x speed.
+
+    - **Step 2**: Cycle detection based on meet.
+    - **Output**: Cycle exists check as True

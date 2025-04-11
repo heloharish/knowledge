@@ -1,0 +1,33 @@
+**Diameter of Binary Tree**
+
+    **Problem Statement**: Return the diameter of the tree, the length of the longest path between any two nodes.
+
+    **Code Solution**:
+    ```java
+    public int diameterOfBinaryTree(TreeNode root) {
+        int[] diameter = new int[1];
+        depth(root, diameter);
+        return diameter[0];
+    }
+
+    private int depth(TreeNode node, int[] diameter) {
+        if (node == null) return 0;
+
+        int leftDepth = depth(node.left, diameter);
+        int rightDepth = depth(node.right, diameter);
+
+        diameter[0] = Math.max(diameter[0], leftDepth + rightDepth);
+
+        return Math.max(leftDepth, rightDepth) + 1;
+    }
+    ```
+
+    **Example Input**: Similar previous tree example
+    **Example Output**: `2`
+
+    **Execution Explanation**:
+    - **Step 1**: Measure depth recursively.
+      - Update global diameter as query left/right path traversal.
+
+    - **Step 2**: Cycle through whole tree before settling as longest edge path sum.
+    - **Output**: Achieved row `(2)` for length max

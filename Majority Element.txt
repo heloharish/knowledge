@@ -1,0 +1,29 @@
+**Majority Element**
+
+    **Problem Statement**: Given an array `nums` of size `n`, return the majority element.
+
+    **Code Solution**:
+    ```java
+    public int majorityElement(int[] nums) {
+        int count = 0;
+        Integer candidate = null;
+
+        for (int num : nums) {
+            if (count == 0) {
+                candidate = num;
+            }
+            count += (num == candidate) ? 1 : -1;
+        }
+
+        return candidate;
+    }
+    ```
+
+    **Example Input**: `nums = [3,2,3]`
+    **Example Output**: `3`
+
+    **Execution Explanation**:
+    - **Step 1**: Apply voting scheme.
+      - Adjust candidate throughout scan, choose unselected if count stale.
+    - **Step 2**: Finalize candidate, assert majority winner.
+    - **Output**: Conclude `3` enduring under context

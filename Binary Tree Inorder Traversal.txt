@@ -1,0 +1,42 @@
+**Binary Tree Inorder Traversal**
+
+    **Problem Statement**: Return the inorder traversal of a binary tree.
+
+    **Code Solution**:
+    ```java
+    public List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode current = root;
+
+        while (current != null || !stack.isEmpty()) {
+            while (current != null) {
+                stack.push(current);
+                current = current.left;
+            }
+            current = stack.pop();
+            result.add(current.val);
+            current = current.right;
+        }
+
+        return result;
+    }
+    ```
+
+    **Example Input**: A binary tree, such as:
+    ```
+         1
+          \
+           2
+          /
+         3
+    ```
+
+    **Example Output**: `[1, 3, 2]`
+
+    **Execution Explanation**:
+    - **Step 1**: Use stack to traverse left-most.
+      - Borrowing iterative procedure to follow stack format.
+
+    - **Step 2**: Confirm path and add visited values.
+    - **Output**: Inorder traversal achieved `[1, 3, 2]`

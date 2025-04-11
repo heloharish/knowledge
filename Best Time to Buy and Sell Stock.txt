@@ -1,0 +1,31 @@
+**Best Time to Buy and Sell Stock**
+
+    **Problem Statement**: You are given an array `prices` where `prices[i]` is the price of a stock on the `i-th` day. Return the maximum profit you can achieve.
+
+    **Code Solution**:
+    ```java
+    public int maxProfit(int[] prices) {
+        int minPrice = Integer.MAX_VALUE;
+        int maxProfit = 0;
+
+        for (int price : prices) {
+            if (price < minPrice) {
+                minPrice = price;
+            } else if (price - minPrice > maxProfit) {
+                maxProfit = price - minPrice;
+            }
+        }
+
+        return maxProfit;
+    }
+    ```
+
+    **Example Input**: `prices = [7, 1, 5, 3, 6, 4]`
+    **Example Output**: `5`
+
+    **Execution Explanation**:
+    - **Step 1**: Track lowest price encountered.
+      - Compare with current price, update maxProfit when higher.
+
+    - **Step 2**: Calculate largest difference utilizing smallest buy seen.
+    - **Output**: Best profit winning `5` (from buying day 2 for 1, sell at 6)

@@ -1,0 +1,34 @@
+**Coin Change**
+
+    **Problem Statement**: Return the fewest number of coins needed to make up a given amount. If it's not possible, return `-1`.
+
+    **Code Solution**:
+    ```java
+    public int coinChange(int[] coins, int amount) {
+        int[] dp = new int[amount + 1];
+        Arrays.fill(dp, amount + 1);
+        dp[0] = 0;
+
+        for (int i = 1; i <= amount; i++) {
+            for (int coin : coins) {
+                if (i - coin >= 0) {
+                    dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+                }
+            }
+        }
+
+        return dp[amount] > amount ? -1 : dp[amount];
+    }
+    ```
+
+    **Example Input**: `coins = [1, 2, 5]`, `amount = 11`
+    **Example Output**: `3`
+
+    **Execution Explanation**:
+    - **Step 1**: Initial zero-state dynamic preparation.
+      - Reflect opportunities upon additional attempts showcase further steps.
+      - ``dp[i]`` holds minimal coin count up to desired sum array.
+
+    - **Step 2**: Evaluate and iterate for possible tactic upon number coin choice involves.
+    - **Output**: Via verified arrangement, return `3` as fewest coins.
+
