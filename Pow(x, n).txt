@@ -1,0 +1,26 @@
+**Pow(x, n)**
+
+   **Problem Statement**: Implement `pow(x, n)`, which calculates `x` raised to the power `n`.
+
+   **Code Solution**:
+   ```java
+   public double myPow(double x, int n) {
+       if (n == 0) return 1;
+       double half = myPow(x, n / 2);
+       if (n % 2 == 0) {
+           return half * half;
+       } else {
+           return (n > 0) ? half * half * x : half * half / x;
+       }
+   }
+   ```
+
+   **Example Input**: `x = 2.0, n = 10`
+   **Example Output**: `1024.0`
+
+   **Execution Explanation**:
+   - **Step 1**: Evaluate recursively.
+     - Split using integer division, check even nature benefits.
+
+   - **Step 2**: Compute base leveraging implicit property.
+   - **Output**: In full multiplication loop upon base and exponent context

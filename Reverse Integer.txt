@@ -1,0 +1,29 @@
+**Reverse Integer**
+
+   **Problem Statement**: Given a signed 32-bit integer `x`, return `x` with its digits reversed. If reversing `x` causes overflow, return `0`.
+
+   **Code Solution**:
+   ```java
+   public int reverse(int x) {
+       int reversed = 0;
+       while (x != 0) {
+           int digit = x % 10;
+           if (reversed > Integer.MAX_VALUE/10 || (reversed == Integer.MAX_VALUE / 10 && digit > 7)) return 0;
+           if (reversed < Integer.MIN_VALUE/10 || (reversed == Integer.MIN_VALUE / 10 && digit < -8)) return 0;
+
+           reversed = reversed * 10 + digit;
+           x /= 10;
+       }
+       return reversed;
+   }
+   ```
+
+   **Example Input**: `x = 123`
+   **Example Output**: `321`
+
+   **Execution Explanation**:
+   - **Step 1**: Initialize reversed integer and loop to flip digits.
+     - Pop by using modulo.
+     - Compute reversed number by collecting them, adjusted specially (overflow safe).
+
+   - **Output**: `321`

@@ -1,0 +1,43 @@
+**Linked List Cycle II**
+
+   **Problem Statement**: Given a linked list, return the node where the cycle begins. If there is no cycle, return `null`.
+
+   **Code Solution**:
+   ```java
+   public ListNode detectCycle(ListNode head) {
+       if (head == null || head.next == null) return null;
+
+       ListNode slow = head, fast = head;
+       boolean isCycle = false;
+
+       while (fast != null && fast.next != null) {
+           slow = slow.next;
+           fast = fast.next.next;
+           if (slow == fast) {
+               isCycle = true;
+               break;
+           }
+       }
+
+       if (!isCycle) return null;
+
+       slow = head;
+       while (slow != fast) {
+           slow = slow.next;
+           fast = fast.next;
+       }
+       return slow;
+   }
+   ```
+
+   **Example Input**: A linked list with nodes forming a cycle starting at node 2.
+   **Example Output**: Node with value `2`
+
+   **Execution Explanation**:
+   - **Step 1**: Use two pointers, `fast` and `slow`.
+     - Move slow from head, fast from two steps ahead.
+     - Meet confirms cycle: calculate start of cycle.
+
+   - **Step 2**: Reset slow to head, iterate until slow meets fast.
+     - Where they meet invokes start of cycle node as object.
+   - **Output**: Node with value `2`

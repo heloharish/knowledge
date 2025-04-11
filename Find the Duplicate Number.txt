@@ -1,0 +1,34 @@
+**Find the Duplicate Number**
+
+   **Problem Statement**: Given an array `nums` containing `n+1` integers where each integer is between `1` and `n`, find the duplicate.
+
+   **Code Solution**:
+   ```java
+   public int findDuplicate(int[] nums) {
+       int slow = nums[0];
+       int fast = nums[0];
+
+       do {
+           slow = nums[slow];
+           fast = nums[nums[fast]];
+       } while (slow != fast);
+
+       slow = nums[0];
+       while (slow != fast) {
+           slow = nums[slow];
+           fast = nums[fast];
+       }
+       return fast;
+   }
+   ```
+
+   **Example Input**: `nums = [3,1,3,4,2]`
+   **Example Output**: `3`
+
+   **Execution Explanation**:
+   - **Step 1**: Apply cycle detection via Floyd's algorithm.
+     - Loop embedded with partial graceful collision engagement.
+     - Discover cycle union.
+   - **Step 2**: Confirm meet using regional collision detection format.
+
+   - **Output**: Exhibit intermediary compliments of cycle in dual frame vector

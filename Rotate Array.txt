@@ -1,0 +1,33 @@
+**Rotate Array**
+
+   **Problem Statement**: Rotate an array to the right by `k` steps.
+
+   **Code Solution**:
+   ```java
+   public void rotate(int[] nums, int k) {
+       k = k % nums.length;
+       reverse(nums, 0, nums.length - 1);
+       reverse(nums, 0, k - 1);
+       reverse(nums, k, nums.length - 1);
+   }
+
+   private void reverse(int[] nums, int start, int end) {
+       while (start < end) {
+           int temp = nums[start];
+           nums[start] = nums[end];
+           nums[end] = temp;
+           start++;
+           end--;
+       }
+   }
+   ```
+
+   **Example Input**: `nums = [1,2,3,4,5,6,7], k = 3`
+   **Example Output**: `[5,6,7,1,2,3,4]`
+
+   **Execution Explanation**:
+   - **Step 1**: Reduce through more than length long repeats using modulo.
+   - **Step 2**: Reverse perspectives lead to considerate outcome.
+     - Continuous inverted progression with three sequence milting confirmation.
+
+   - **Output**: The slides mirrored to meet `k` demands straightforwardly

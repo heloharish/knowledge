@@ -1,0 +1,32 @@
+**Group Anagrams**
+
+   **Problem Statement**: Given an array `strs` of strings, return the groups of anagrams.
+
+   **Code Solution**:
+   ```java
+   public List<List<String>> groupAnagrams(String[] strs) {
+       Map<String, List<String>> map = new HashMap<>();
+
+       for (String s : strs) {
+           char[] charArray = s.toCharArray();
+           Arrays.sort(charArray);
+           String key = String.valueOf(charArray);
+
+           if (!map.containsKey(key)) {
+               map.put(key, new ArrayList<>());
+           }
+           map.get(key).add(s);
+       }
+       return new ArrayList<>(map.values());
+   }
+   ```
+
+   **Example Input**: `["eat","tea","tan","ate","nat","bat"]`
+   **Example Output**: `[["bat"], ["nat","tan"], ["ate","eat","tea"]]`
+
+   **Execution Explanation**:
+   - **Step 1**: Sort characters of each string.
+     - Collate sorted representation as unique group identifier.
+
+   - **Step 2**: Collect as aggregate results based on this signature.
+   - **Output**: Verified relations such that sorted identicals meet within nested list assembly.

@@ -1,0 +1,29 @@
+**Intersection of Two Linked Lists**
+
+   **Problem Statement**: Return the node at which two singly linked lists intersect. If no intersection, return `null`.
+
+   **Code Solution**:
+   ```java
+   public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+       if (headA == null || headB == null) return null;
+
+       ListNode a = headA, b = headB;
+
+       while (a != b) {
+           a = (a == null) ? headB : a.next;
+           b = (b == null) ? headA : b.next;
+       }
+       return a;
+   }
+   ```
+
+   **Example Input**: Two lists intersecting at node with value `8`.
+   **Example Output**: Node with value `8`
+
+   **Execution Explanation**:
+   - **Step 1**: Start traversal on both lists using dual pointers.
+     - Basic loop logic meets again at intersect point.
+     - Path calculation merges progress comparison.
+
+   - **Step 2**: Check if they meet, return node object as output.
+   - **Output**: Node with value `8`

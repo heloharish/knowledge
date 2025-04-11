@@ -1,0 +1,27 @@
+**Jump Game**
+
+   **Problem Statement**: Determine if able to reach last index starting from first via jumps defined by array values.
+
+   **Code Solution**:
+   ```java
+   public boolean canJump(int[] nums) {
+       int lastIndex = nums.length - 1;
+
+       for (int i = nums.length - 2; i >= 0; i--) {
+           if (i + nums[i] >= lastIndex) {
+               lastIndex = i;
+           }
+       }
+       return lastIndex == 0;
+   }
+   ```
+
+   **Example Input**: `nums = [2,3,1,1,4]`
+   **Example Output**: `true`
+
+   **Execution Explanation**:
+   - **Step 1**: Review backward each step feasibility.
+     - Check and recheck positions minus their jumps.
+
+   - **Step 2**: Return boolean given valid completion.
+   - **Output**: Given nature and circumstance agreement `true`

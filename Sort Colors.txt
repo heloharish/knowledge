@@ -1,0 +1,40 @@
+**Sort Colors**
+
+   **Problem Statement**: Sort colors using integers `0`, `1`, and `2` to represent colors.
+
+   **Code Solution**:
+   ```java
+   public void sortColors(int[] nums) {
+       int low = 0, mid = 0, high = nums.length - 1;
+
+       while (mid <= high) {
+           switch (nums[mid]) {
+               case 0:
+                   swap(nums, low++, mid++);
+                   break;
+               case 1:
+                   mid++;
+                   break;
+               case 2:
+                   swap(nums, mid, high--);
+                   break;
+           }
+       }
+   }
+
+   private void swap(int[] nums, int i, int j) {
+       int temp = nums[i];
+       nums[i] = nums[j];
+       nums[j] = temp;
+   }
+   ```
+
+   **Example Input**: `nums = [2,0,2,1,1,0]`
+   **Example Output**: `[0,0,1,1,2,2]`
+
+   **Execution Explanation**:
+   - **Step 1**: Cycle through various colors based on regional influence.
+     - Operate distinctive swap system enclosures.
+   - **Step 2**: Collaborative offset-specific adjustments.
+
+   - **Output**: Conclude `total match` alignment rule created

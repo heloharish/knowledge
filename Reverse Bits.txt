@@ -1,0 +1,26 @@
+**Reverse Bits**
+
+   **Problem Statement**: Reverse bits of a given 32 bits unsigned integer.
+
+   **Code Solution**:
+   ```java
+   public int reverseBits(int n) {
+       int result = 0;
+       for (int i = 0; i < 32; i++) {
+           result <<= 1;  
+           result |= (n & 1);  
+           n >>>= 1;  
+       }
+       return result;
+   }
+   ```
+
+   **Example Input**: `n = 00000010100101000001111010011100` (binary)
+   **Example Output**: `00111001011110000010100101000000` (reverse binary)
+
+   **Execution Explanation**:
+   - **Step 1**: Push sequence of bits.
+     - Edits conveying their reversal digitally via bit operation synchronization echoing system sense.
+
+   - **Step 2**: Confirmation outcome places through complete reversal/backend viewing straightforward.
+   - **Output**: Display swaps by structural refinements from ultimate needs forthcoming
